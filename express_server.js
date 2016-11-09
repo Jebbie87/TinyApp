@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 // THIS WILL PRINT OUT ALL THE URLS AND THE SHORTENED FORMS
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
+
   res.render("urls_index", templateVars);
 });
 
@@ -37,6 +38,11 @@ app.get("/urls/new", (req, res) => {
   const message = "Sorry that page did not exist"
   res.render("urls_new");
 });
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req['params']['shortURL']]
+  res.redirect("/urls")
+})
 
 // THIS ONE WILL DISPLAY A SINGLE URL AND ITS SHORTENED FORM
 app.get("/urls/:id", (req, res) => {

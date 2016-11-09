@@ -8,9 +8,26 @@
 </head>
 <body>
   <!-- ADD MY EJS CODE HERE -->
-  <ul>
+  <table>
   <% Object.keys(urls).forEach(function(list) { %>
-  <li><%= list %> : <%= urls[list] %></li>
+
+
+
+  <tr><td>
+
+  <%= list %> : <%= urls[list] %>
+ </td></tr>
+ <tr><td>
+  <form method="POST" action="<%=`/urls/${list}/delete`%>">
+        <input type="submit" value="DELETE">
+  </form>
+
+ </tr></td>
+
   <% }) %>
-</ul>
+</table>
+
+
+
+</body>
 </html>
