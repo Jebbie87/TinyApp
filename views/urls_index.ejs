@@ -8,5 +8,9 @@
 </head>
 <body>
   <!-- ADD MY EJS CODE HERE -->
-</body>
+  <ul>
+  <% Object.keys(urls).forEach(function(list) { %>
+  <li><%= list %> : <%= urls[list] %></li>
+  <% }) %>
+</ul>
 </html>
