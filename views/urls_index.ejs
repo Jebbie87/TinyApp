@@ -10,24 +10,21 @@
   <!-- ADD MY EJS CODE HERE -->
   <table>
   <% Object.keys(urls).forEach(function(list) { %>
+  <tr>
 
-
-
-  <tr><td>
-
-  <%= list %> : <%= urls[list] %>
- </td></tr>
- <tr><td>
-  <form method="POST" action="<%=`/urls/${list}/delete`%>">
+  <td><a href="urls/<%= `${list}` %>"><%= `${list}` %></a></td>
+  <td>: <a href="<%= `${urls[list]}` %>"><%= `${urls[list]}` %></td>
+  <td style="padding-top: 15px; padding-left: 10px"><form method="GET" action="<%=`/urls/${list}`%>">
+        <input type="submit" value="EDIT">
+  </form></td>
+  <td style="padding-top: 15px; padding-left: 10px"><form method="POST" action="<%=`/urls/${list}/delete`%>">
         <input type="submit" value="DELETE">
-  </form>
-
- </tr></td>
-
+  </form></td>
+  </tr>
   <% }) %>
 </table>
 
-
+<p><a href="urls/new">Click here to generate a new URL</a></p>
 
 </body>
 </html>
