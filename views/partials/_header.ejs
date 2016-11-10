@@ -1,3 +1,20 @@
 <!-- ./views/partials/_header.ejs -->
 
+<DOCTYPE html>
+<html lang="en">
 <title>TITLE_PLACEHOLDER</title>
+<body>
+<% if (!username) { %>
+<form action="/login" method="POST">
+  <label for="login"> Login:</label>
+    <input id="login" type="text" name="username" style="width: 300px" placeholder=" Username" >
+    <input type="submit" value="SUBMIT">
+</form>
+<% } else { %>
+<form action="/logout" method="POST">
+  <label for="logout"> Your username is: <%= username %></label>
+  <input id="logout" type="submit" name="logout" value="LOGOUT">
+</form>
+<% } %>
+</body>
+</html>

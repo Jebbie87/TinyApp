@@ -3,7 +3,9 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
@@ -21,7 +23,9 @@ const generateRandomString = function (){
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
-}
+};
+
+let cookies = [];
 
 app.get("/", (req, res) => {
   res.end("Hello!");
@@ -29,7 +33,10 @@ app.get("/", (req, res) => {
 
 // THIS WILL PRINT OUT ALL THE URLS AND THE SHORTENED FORMS
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies['username']
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -40,21 +47,22 @@ app.get("/urls/new", (req, res) => {
 
 // THIS WILL DELETE THE URL OFF THE DATABASE WHEN DELETE IS CLICKED
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req['params']['shortURL']]
-  res.redirect("/urls")
-})
+  delete urlDatabase[req['params']['shortURL']];
+  res.redirect("/urls");
+});
 
 // THIS ONE WILL DISPLAY A SINGLE URL AND ITS SHORTENED FORM
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                       longURL: urlDatabase[req.params.id]};
+                       longURL: urlDatabase[req.params.id],
+                       username: req.cookies['username']};
   res.render("urls_show", templateVars);
 });
 
 // THIS WILL REDIRECT YOU TO THE WEBSITE
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req['params']['shortURL']]
-  res.render('urls_new')
+  let longURL = urlDatabase[req['params']['shortURL']];
+  res.render('urls_new');
 });
 
 // THIS WILL GET THE LONG URL FROM THE USER AND THEN SEND THEM TO THE
@@ -62,14 +70,23 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req['body']['longURL'];
-  res.redirect(`urls/${shortURL}`)
+  res.redirect(`urls/${shortURL}`);
 });
 
 // THIS WILL EDIT THE LONG URL
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req['params']['shortURL']] = req['body']['longURL']
-  // let shortURL = req['params']['shortURL']
+  urlDatabase[req['params']['shortURL']] = req['body']['longURL'];
+  res.redirect('/urls');
+});
+
+app.post("/login", (req, res) => {
+  cookies.push(res.cookie("username", req['body']['username']))
   res.redirect('/urls')
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username")
+  res.redirect("/urls")
 })
 
 app.listen(PORT, () => {
