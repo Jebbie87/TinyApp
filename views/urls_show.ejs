@@ -9,8 +9,8 @@
   <body style="font-size:20px; padding 50px">
 
 
-        <p style="margin-top: 100px">The short URL is: <%= shortURL %></p>
-      <form action="<%=`/urls/${shortURL}`%>" method="POST" style="margin: 250px;">
+        <p">The short URL is: <%= shortURL %></p>
+      <form action="<%=`/urls/${shortURL}`%>" method="POST">
         <label for="longURL">Your main URL is: </label>
         <input id="longURL" type="text" name="longURL"
           style="width: 300px" value="<%= longURL %>">
