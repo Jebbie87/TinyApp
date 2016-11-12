@@ -11,7 +11,7 @@
 
         <p">The short URL is: <%= shortURL %></p>
       <form action="<%=`/urls/${shortURL}`%>" method="POST">
-        <label for="longURL">Your main URL is: </label>
+        <label for="longURL">The main URL is: </label>
         <input id="longURL" type="text" name="longURL"
           style="width: 300px" value="<%= longURL %>">
         <input type="submit" value="submit">
