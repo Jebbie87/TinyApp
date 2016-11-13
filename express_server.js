@@ -26,22 +26,22 @@ const urlDatabase = {
   'asdfasfd': 'http://reddit.com'
 };
 
-const users = {'asdf': {'id': 'asdf',
-                        'email': 'test@test.com',
-                        'password': 'asdf',
-                        'urls': {'b2xVn2': 'http://www.lighthouselabs.ca',
+const users = {'asdf': { 'id': 'asdf',
+                         'email': 'test@test.com',
+                         'password': 'asdf',
+                         'urls': {'b2xVn2': 'http://www.lighthouselabs.ca',
                                  '9sm5xK': 'http://www.google.com'}
                         },
-                'test': {'id': 'hello',
-                         'email': 'test@test',
-                         'password': 'hello',
-                         'urls': {'nsdnf': 'http://reddit.com',
-                                  'nsdnfs': 'http://yahoo.com'}
+                'test': { 'id': 'test',
+                          'email': 'test@test',
+                          'password': 'asdf',
+                          'urls': {'nsdnf': 'http://reddit.com',
+                                 'nsdnfs': 'http://yahoo.com'}
                         }
               };
 
 app.get('/', (req, res) => {
-  let user = req['cookies']['user_id'];
+  const user = req['cookies']['user_id'];
   if (!user) {
     res.redirect('/login');
   } else {
@@ -50,8 +50,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let user = req['cookies']['user_id'];
-  let templateVars = { email: users[user]['email'] };
+  const user = req['cookies']['user_id'];
+  let templateVars = { 'email': users[user]['email'],
+                       'users': users,
+                       'user': user};
   if (!user) {
     res.status(400);
     res.render('error-login');
@@ -62,7 +64,7 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  let user = 'asdf' // req.cookies['user_id'];
+  const user = req['cookies']['user_id'];
   if(!user) {
     res.status(401);
     res.render('error-login');
@@ -73,11 +75,20 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  let user = 'asdf'
+  const currentUser = req['cookies']['user_id'];
+
   if(!urlDatabase.hasOwnProperty(req['params']['id'])) {
-    res.response(404).send('Sorry this page does not exist');
-  } else if (!user) {
-    res.response(401);
+    res.status(404);
+    res.render('404-error');
+  } else if (!currentUser) {
+    res.status(401);
+    res.render('error-login')
+  } else if (!users[currentUser]['urls'].hasOwnProperty(req['params']['id'])) {
+    res.status(403);
+    res.render('403-error')
+  } else {
+    res.status(200);
+    res.render('urls_show')
   }
 })
 
@@ -92,18 +103,19 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  let user = 'asdf' // req.cookies['user_id'];
+  const user = req['cookies']['user_id'];
   if (!user) {
     res.status(401);
     res.render('error-login');
   } else {
+
     // NEED TO ASSOCIATE THE NEW URL WITH USER
     res.redirect('/urls/:id');
   }
 })
 
 app.post('/urls/:id', (req, res) => {
-  let user = 'asdf' // req.cookies['user_id'];
+  const user = req['cookies']['user_id'];
   if (!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.status(404);
     res.render('404-error');
@@ -111,10 +123,12 @@ app.post('/urls/:id', (req, res) => {
     res.status(401);
     res.render('error-login');
   }
+
+  res.render('urls_show')
 })
 
 app.get('/login', (req, res) => {
-  let user = 'asdf' // req.cookies['user_id'];
+  const user = req['cookies']['user_id'];
   if (user != 'a') {
     res.status(200);
     res.render('urls_login');
@@ -124,18 +138,38 @@ app.get('/login', (req, res) => {
 })
 
 app.get('/register', (req, res) => {
-  let user = 'asdf' // req.cookies['user_id'];
+  const user = req['cookies']['user_id'];
   if (!user) {
-    res.response(200);
-    res.render('/urls_register');
+    res.status(200);
+    res.render('urls_register');
   } else {
     res.redirect('/');
   };
 });
 
-// app.post('/register', (req, res) => {
+app.post('/register', (req, res) => {
+  let matchingEmail = false;
+  if (req['body']['email'] === '' || req['body']['password'] === ''){
+    res.status(400)
+    res.render('register-blank-error')
+  } else {
+    Object.keys(users).forEach(function(user){
+      if (users[user]['email'] === req['body']['email']) {
+        matchingEmail = true;
+      }
+    });
+  };
 
-// })
+  if (matchingEmail === false) {
+    const userID = generateRandomString();
+    users[userID] = { 'id': userID,
+                      'email': req['body']['email'],
+                      'password': req['body']['password']
+                    };
+    res.cookie('user_id', userID);
+    res.redirect('/');
+  };
+})
 
 app.post('/login', (req, res) => {
   let loginMatch = false;

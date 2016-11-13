@@ -1,7 +1,6 @@
 <% 'use strict'; %>
-<!-- ./views/urls_index.ejs -->
 
-  <% include ./partials/_header.ejs  %>
+<% include ./partials/_header.ejs  %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,5 +9,21 @@
 </head>
 <body>
     <!-- Add your EJS code here -->
+    <table>
+    <tr>
+    <% Object.keys(users[user]['urls']).forEach(function(userURL){ %>
+
+    <td><%= `${userURL}` %></td>
+    <td>: <%= `${users[user]['urls'][userURL]}` %></td>
+    <td style="padding-top: 5px; padding-left: 10px"><form method="GET" action="<%=`/urls/${user}`%>">
+        <input type="submit" value="EDIT">
+    </form></td>
+    <td style="padding-top: 5px; padding-left: 10px"><form method="POST" action="<%=`/urls/${user}/delete`%>">
+        <input type="submit" value="DELETE">
+    </form></td>
+    </tr>
+    <% }) %>
+    </table>
+    <p><a href="/urls/new">CLICK HERE TO CREATE A NEW LINK</a></p>
 </body>
 </html>
