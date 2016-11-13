@@ -33,7 +33,7 @@ const users = {'asdf': {'id': 'asdf',
                                  '9sm5xK': 'http://www.google.com'} }};
 
 app.get('/', (req, res) => {
-  const user = 'asdf' //req['cookies']['user_id'];
+  let user = 'asdf' //req['cookies']['user_id'];
   if (!user) {
     res.redirect('/urls');
   } else {
@@ -42,24 +42,24 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const user = 'asdf' //req['cookies']['user_id'];
+  let user = 'asdf' //req['cookies']['user_id'];
   let templateVars = { shortURL: users[user]['urls'],
                        longURL: users[user]['urls']
                     };
   if (!user) {
     res.status(400);
-    res.render('error-page');
+    res.render('error-login');
   } else {
-    res.status(400);
+    res.status(200);
     res.render('urls_index');
   };
 });
 
 app.get('/urls/new', (req, res) => {
-  const user = 'asdf' // req.cookies['user_id'];
+  let user = 'asdf' // req.cookies['user_id'];
   if(!user) {
     res.status(401);
-    res.render('error-page');
+    res.render('error-login');
   } else {
     res.status(200);
     res.render('urls_new');
@@ -67,7 +67,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:id', (req, res) => {
-  const user = 'asdf' //
+  let user = 'asdf' //
   if(!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.response(404).send('Sorry this page does not exist');
   } else if (!user) {
@@ -76,13 +76,68 @@ app.get('/urls/:id', (req, res) => {
 })
 
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req['params']['id']];
+  let longURL = urlDatabase[req['params']['id']];
   if (!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.status(404);
     res.render('404-error');
   } else {
-    res.redirect(longURL)
+    res.redirect(longURL);
   }
+});
+
+app.post('/urls', (req, res) => {
+  let user = 'asdf' // req.cookies['user_id'];
+  if (!user) {
+    res.status(401);
+    res.render('error-login');
+  } else {
+    // NEED TO ASSOCIATE THE NEW URL WITH USER
+    res.redirect('/urls/:id');
+  }
+})
+
+app.post('/urls/:id', (req, res) => {
+  let user = 'asdf' // req.cookies['user_id'];
+  if (!urlDatabase.hasOwnProperty(req['params']['id'])) {
+    res.status(404);
+    res.render('404-error');
+  } else if (!user) {
+    res.status(401);
+    res.render('error-login');
+  }
+})
+
+app.get('/login', (req, res) => {
+  let user = 'asdf' // req.cookies['user_id'];
+  if (!user) {
+    res.response(200);
+    res.render('/urls_login');
+  } else {
+    res.redirect('/')
+  }
+})
+
+app.get('/register', (req, res) => {
+  let user = 'asdf' // req.cookies['user_id'];
+  if (!user) {
+    res.response(200);
+    res.render('/urls_register');
+  } else {
+    res.redirect('/')
+  }
+})
+
+app.post('/register', (req, res) => {
+
+})
+
+app.post('/login', (req, res) => {
+
+})
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('user_id');
+  res.redirect('/');
 });
 
 app.listen(PORT, () => {
