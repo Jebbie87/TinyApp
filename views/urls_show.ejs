@@ -2,21 +2,3 @@
 
 <% include ./partials/_header.ejs  %>
 
-
-<!DOCTYPE html>
-<html lang="en">
-  <head></head>
-  <body style="font-size:20px; padding 50px">
-
-
-        <p">The short URL is: <%= shortURL %></p>
-      <form action="<%=`/urls/${shortURL}`%>" method="POST">
-        <label for="longURL">The main URL is: </label>
-        <input id="longURL" type="text" name="longURL"
-          style="width: 300px" value="<%= longURL %>">
-        <input type="submit" value="submit">
-      </form>
-      <a href="/urls">Click here to go to the main list of URL pages</a>
-  </body>
-</html>
-

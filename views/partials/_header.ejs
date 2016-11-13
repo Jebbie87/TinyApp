@@ -1,22 +1,9 @@
 <!-- ./views/partials/_header.ejs -->
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<title>TITLE_PLACEHOLDER</title>
+<head>TINY APP</head>
 <body>
-<% if (!user) { %>
-<form action="/login" method="POST">
-  <label for="login"> Login:</label>
-    <input id="login" type="text" name="username" style="width: 300px" placeholder=" Username" >
-    <input type="submit" value="SUBMIT">
-</form>
-<p><a href="/register">Click here to register</a></p>
-<p><a href="/login">Click here to login</a></p>
-<% } else { %>
-<form action="/logout" method="POST">
-  <label for="logout"> Your email is: <%= email  %></label>
-  <input id="logout" type="submit" name="logout" value="LOGOUT">
-</form>
-<% } %>
+
 </body>
 </html>
