@@ -2,21 +2,26 @@
 
 <% include ./partials/_header.ejs  %>
 
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head></head>
-  <body style="font-size:20px; padding 50px">
-
-
-        <p style="margin-top: 100px">The short URL is: <%= shortURL %></p>
-      <form action="<%=`/urls/${shortURL}`%>" method="POST" style="margin: 250px;">
-        <label for="longURL">Your main URL is: </label>
-        <input id="longURL" type="text" name="longURL"
-          style="width: 300px" value="<%= longURL %>">
-        <input type="submit" value="submit">
+  <body style='font-size:20px; padding 50px'>
+        <p>The short URL is: <%= shortURL %></p>
+      <form action='<%=`/urls/${shortURL}`%>' method='POST'>
+        <label for='longURL'>The main URL is: </label>
+        <input id='longURL' type='text' name='longURL'
+          style='width: 300px' value='<%= longURL %>'>
+        <input type='submit' value='SUBMIT'>
       </form>
-      <a href="/urls">Click here to go to the main list of URL pages</a>
+      <td style='padding-top: 5px; padding-left: 10px'><form method='POST' action='<%=`/urls/${shortURL}/delete`%>'>
+        <input type='submit' value='DELETE'>
+        </form>
+
+      <br>
+      <br>
+      <a href='/urls'>CLICK HERE TO GO TO THE MAIN LIST OF YOUR URLS PAGES</a>
+      <br>
+      <br>
+      <a href='/'>CLICK HERE TO GO TO THE PAGE WITH ALL THE URLS</a>
   </body>
 </html>
-

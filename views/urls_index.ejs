@@ -1,30 +1,33 @@
-<!-- ./views/urls_index.ejs -->
+<% 'use strict'; %>
 
-  <% include ./partials/_header.ejs  %>
+<% include ./partials/_header.ejs  %>
 
-<html lang="en">
+<!DOCTYPE html>
+<html lang='en'>
 <head>
   <title>TinyApp</title>
 </head>
 <body>
-  <!-- ADD MY EJS CODE HERE -->
-  <table>
-  <% Object.keys(urls).forEach(function(list) { %>
-  <tr>
+    <!-- Add your EJS code here -->
+    <table>
 
-  <td><a href="urls/<%= `${list}` %>"><%= `${list}` %></a></td>
-  <td>: <a href="<%= `${urls[list]}` %>"><%= `${urls[list]}` %></td>
-  <td style="padding-top: 15px; padding-left: 10px"><form method="GET" action="<%=`/urls/${list}`%>">
-        <input type="submit" value="EDIT">
-  </form></td>
-  <td style="padding-top: 15px; padding-left: 10px"><form method="POST" action="<%=`/urls/${list}/delete`%>">
-        <input type="submit" value="DELETE">
-  </form></td>
-  </tr>
-  <% }) %>
-</table>
+    <% Object.keys(users[user]['urls']).forEach(function(userURL){ %>
+    <tr>
+    <td><a href='urls/<%= `${userURL}` %>'><%= `${userURL}` %></td>
+    <td>: <a href='<%= `${users[user]['urls'][userURL]}` %>'><%= `${users[user]['urls'][userURL]}` %></td>
 
-<p><a href="urls/new">Click here to generate a new URL</a></p>
+    <td style='padding-top: 5px; padding-left: 10px'><form method='GET' action='<%=`/urls/${userURL}`%>'>
+        <input type='submit' value='EDIT'>
+    </form></td>
 
+    <td style='padding-top: 5px; padding-left: 10px'><form method='POST' action='<%=`/urls/${userURL}/delete`%>'>
+        <input type='submit' value='DELETE'>
+
+    </form></td>
+    </tr>
+    <% }) %>
+    </table>
+    <p><a href='/urls/new'>CLICK HERE TO CREATE A NEW LINK</a></p>
+    <p><a href='/'>CLICK HERE TO GO TO THE FULL URL LIST PAGE</a></p>
 </body>
 </html>
