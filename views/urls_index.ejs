@@ -10,20 +10,24 @@
 <body>
     <!-- Add your EJS code here -->
     <table>
-    <tr>
-    <% Object.keys(users[user]['urls']).forEach(function(userURL){ %>
 
-    <td><%= `${userURL}` %></td>
-    <td>: <%= `${users[user]['urls'][userURL]}` %></td>
-    <td style="padding-top: 5px; padding-left: 10px"><form method="GET" action="<%=`/urls/${user}`%>">
+    <% Object.keys(users[user]['urls']).forEach(function(userURL){ %>
+    <tr>
+    <td><a href="urls/<%= `${userURL}` %>"><%= `${userURL}` %></td>
+    <td>: <a href="<%= `${users[user]['urls'][userURL]}` %>"><%= `${users[user]['urls'][userURL]}` %></td>
+
+    <td style="padding-top: 5px; padding-left: 10px"><form method="GET" action="<%=`/urls/${userURL}`%>">
         <input type="submit" value="EDIT">
     </form></td>
-    <td style="padding-top: 5px; padding-left: 10px"><form method="POST" action="<%=`/urls/${user}/delete`%>">
+
+    <td style="padding-top: 5px; padding-left: 10px"><form method="POST" action="<%=`/urls/${userURL}/delete`%>">
         <input type="submit" value="DELETE">
+
     </form></td>
     </tr>
     <% }) %>
     </table>
-    <p><a href="/urls/new">CLICK HERE TO CREATE A NEW LINK</a></p>
+    <p><a href='/urls/new'>CLICK HERE TO CREATE A NEW LINK</a></p>
+    <p><a href='/'>CLICK HERE TO GO TO THE FULL URL LIST PAGE</a></p>
 </body>
 </html>

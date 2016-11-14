@@ -4,6 +4,10 @@ const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const password = "purple-monkey-dinosaur"; // you will probably this from req.params
+const hashed_password = bcrypt.hashSync(password, 10);
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
@@ -33,7 +37,7 @@ const users = {'asdf': { 'id': 'asdf',
                                  '9sm5xK': 'http://www.google.com'}
                         },
                 'test': { 'id': 'test',
-                          'email': 'test@test',
+                          'email': 'ta',
                           'password': 'asdf',
                           'urls': {'nsdnf': 'http://reddit.com',
                                  'nsdnfs': 'http://yahoo.com'}
@@ -42,22 +46,37 @@ const users = {'asdf': { 'id': 'asdf',
 
 app.get('/', (req, res) => {
   const user = req['cookies']['user_id'];
+  // if (!user) {
+  //   res.redirect('/login');
+  // } else {
+  //   res.redirect('/urls');
+  // };
   if (!user) {
-    res.redirect('/login');
+    let templateVars = {'urls': urlDatabase,
+                        'user': ''}
+    res.render('urls_list', templateVars);
+    // res.redirect('/login');
   } else {
-    res.redirect('/urls');
+    let templateVars = {'user': user,
+                        'email': users[user]['email'],
+                        'urls': urlDatabase}
+    res.render('urls_list', templateVars);
   };
+
 });
 
 app.get('/urls', (req, res) => {
   const user = req['cookies']['user_id'];
-  let templateVars = { 'email': users[user]['email'],
-                       'users': users,
-                       'user': user};
   if (!user) {
     res.status(400);
     res.render('error-login');
   } else {
+    if (!users[user].hasOwnProperty('urls')) {
+      users[user]['urls'] = {};
+    }
+    let templateVars = { 'email': users[user]['email'],
+                       'users': users,
+                       'user': user};
     res.status(200);
     res.render('urls_index', templateVars);
   };
@@ -74,22 +93,34 @@ app.get('/urls/new', (req, res) => {
   };
 });
 
-app.get('/urls/:id', (req, res) => {
-  const currentUser = req['cookies']['user_id'];
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const user = req['cookies']['user_id'];
+  delete urlDatabase[req['params']['shortURL']];
+  delete users[user]['urls'][req['params']['shortURL']]
+  res.redirect('/urls');
+});
 
+
+app.get('/urls/:id', (req, res) => {
+  const user = req['cookies']['user_id'];
   if(!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.status(404);
     res.render('404-error');
-  } else if (!currentUser) {
+  } else if (!user) {
     res.status(401);
-    res.render('error-login')
-  } else if (!users[currentUser]['urls'].hasOwnProperty(req['params']['id'])) {
+    res.render('error-login');
+  } else if (!users[user]['urls'].hasOwnProperty(req['params']['id'])) {
     res.status(403);
-    res.render('403-error')
+    res.render('403-error');
   } else {
+     let templateVars = { 'shortURL': req['params']['id'],
+                          'longURL': urlDatabase[req['params']['id']],
+                          'email': users[user]['email'],
+                          'user': user
+                        };
     res.status(200);
-    res.render('urls_show')
-  }
+    res.render('urls_show', templateVars);
+  };
 })
 
 app.get('/u/:id', (req, res) => {
@@ -99,33 +130,49 @@ app.get('/u/:id', (req, res) => {
     res.render('404-error');
   } else {
     res.redirect(longURL);
-  }
+  };
 });
 
 app.post('/urls', (req, res) => {
   const user = req['cookies']['user_id'];
+  let templateVars = { 'email': users[user]['email'],
+                       'user': user,
+                       'users': users
+                     };
   if (!user) {
     res.status(401);
     res.render('error-login');
   } else {
-
-    // NEED TO ASSOCIATE THE NEW URL WITH USER
-    res.redirect('/urls/:id');
-  }
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = req['body']['longURL']
+    users[user]['urls'][shortURL] = req['body']['longURL']
+    res.redirect(`/urls/${shortURL}`)
+  };
 })
 
 app.post('/urls/:id', (req, res) => {
   const user = req['cookies']['user_id'];
+
   if (!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.status(404);
     res.render('404-error');
   } else if (!user) {
     res.status(401);
     res.render('error-login');
-  }
-
-  res.render('urls_show')
-})
+  } else if (!users[user]['urls'].hasOwnProperty(req['params']['id'])) {
+    res.status(403);
+    res.render('403-error');
+  } else {
+    let templateVars = { 'email': users[user]['email'],
+                       'shortURL': req['params']['id'],
+                       'longURL': req['body']['longURL'],
+                       'user': user
+                     };
+    urlDatabase[req['params']['id']] = req['body']['longURL']
+    users[user]['urls'][req['params']['id']] = req['body']['longURL']
+    res.render('urls_show', templateVars);
+  };
+});
 
 app.get('/login', (req, res) => {
   const user = req['cookies']['user_id'];
@@ -133,9 +180,9 @@ app.get('/login', (req, res) => {
     res.status(200);
     res.render('urls_login');
   } else {
-    res.redirect('/')
-  }
-})
+    res.redirect('/');
+  };
+});
 
 app.get('/register', (req, res) => {
   const user = req['cookies']['user_id'];
@@ -150,12 +197,14 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let matchingEmail = false;
   if (req['body']['email'] === '' || req['body']['password'] === ''){
-    res.status(400)
-    res.render('register-blank-error')
+    res.status(400);
+    res.render('register-blank-error');
   } else {
     Object.keys(users).forEach(function(user){
       if (users[user]['email'] === req['body']['email']) {
         matchingEmail = true;
+        res.status(400);
+        res.render('register-email-error');
       }
     });
   };
@@ -180,7 +229,7 @@ app.post('/login', (req, res) => {
     };
   });
     if (loginMatch === true) {
-      res.redirect('/');
+      res.redirect('/urls');
     } else {
       res.status(401);
       res.render('error-login');

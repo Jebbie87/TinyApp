@@ -2,3 +2,24 @@
 <!-- ./views/urls_index.ejs -->
 
 <% include ./partials/_header.ejs %>
+
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+  <h1>Here is a list of all the short URLS and the list of where they go to</h1>
+  <table>
+    <% Object.keys(urls).forEach(function(shortURL){ %>
+  <tr>
+  <td><a href="urls/<%= `${shortURL}` %>"><%= `${shortURL}` %></a></td>
+  <td>: <a href="<%= `${urls[shortURL]}` %>"><%= `${urls[shortURL]}` %></td>
+  </tr>
+  <% }) %>
+
+    <% if (user) { %>
+      <p><a href='/urls'>CLICK HERE TO GO TO YOUR URL PAGE LIST</a></p>
+    <% } %>
+</table>
+</body>
+</html>
