@@ -80,7 +80,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-
 app.get('/urls/:id', (req, res) => {
   const user = req['session']['user_id'];
   if (!user) {
@@ -138,7 +137,6 @@ app.post('/urls', (req, res) => {
 
 app.post('/urls/:id', (req, res) => {
   const user = req.session.user_id;
-
   if (!urlDatabase.hasOwnProperty(req['params']['id'])) {
     res.status(404);
     res.render('404-error');
@@ -192,7 +190,7 @@ app.post('/register', (req, res) => {
         matchingEmail = true;
         res.status(400);
         res.render('register-email-error');
-      }
+      };
     });
   };
 
@@ -207,7 +205,7 @@ app.post('/register', (req, res) => {
     req['session']['user_id'] = userID;
     res.redirect('/');
   };
-})
+});
 
 app.post('/login', (req, res) => {
   let loginMatch = false;
@@ -224,6 +222,7 @@ app.post('/login', (req, res) => {
       res.render('error-login');
     };
 });
+
 app.post('/logout', (req, res) => {
   req['session'] = null;
   res.redirect('/');
@@ -233,7 +232,6 @@ app.get('/logout', (req, res) => {
   req['session'] = null;
   res.redirect('/');
 });
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
