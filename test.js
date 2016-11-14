@@ -46,10 +46,16 @@ const users = {'asdf': { 'id': 'asdf',
 
 app.get('/', (req, res) => {
   const user = req['cookies']['user_id'];
+  // if (!user) {
+  //   res.redirect('/login');
+  // } else {
+  //   res.redirect('/urls');
+  // };
   if (!user) {
     let templateVars = {'urls': urlDatabase,
                         'user': ''}
     res.render('urls_list', templateVars);
+    // res.redirect('/login');
   } else {
     let templateVars = {'user': user,
                         'email': users[user]['email'],
@@ -207,7 +213,7 @@ app.post('/register', (req, res) => {
     const userID = generateRandomString();
     users[userID] = { 'id': userID,
                       'email': req['body']['email'],
-                      'password': bcrypt.hashSync(req['body']['password'], 10)
+                      'password': req['body']['password']
                     };
     res.cookie('user_id', userID);
     res.redirect('/');
@@ -217,7 +223,7 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   let loginMatch = false;
   Object.keys(users).forEach(function(user) {
-    if (users[user]['email'] === req['body']['email'] && bcrypt.compareSync(req['body']['password'], users[user]['password'])) {
+    if (users[user]['email'] === req['body']['email'] && users[user]['password'] === req['body']['password']) {
       loginMatch = true;
       res.cookie('user_id', users[user]['id']);
     };
