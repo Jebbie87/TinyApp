@@ -3,7 +3,7 @@
 
 <% include ./partials/_header.ejs %>
 
-<html lang="en">
+<html lang='en'>
 <head>
   <title>TinyApp</title>
 </head>
@@ -12,8 +12,8 @@
   <table>
     <% Object.keys(urls).forEach(function(shortURL){ %>
   <tr>
-  <td><a href="urls/<%= `${shortURL}` %>"><%= `${shortURL}` %></a></td>
-  <td>: <a href="<%= `${urls[shortURL]}` %>"><%= `${urls[shortURL]}` %></td>
+  <td><a href='urls/<%= `${shortURL}` %>'><%= `${shortURL}` %></a></td>
+  <td>: <a href='<%= `${urls[shortURL]}` %>'><%= `${urls[shortURL]}` %></td>
   </tr>
   <% }) %>
 

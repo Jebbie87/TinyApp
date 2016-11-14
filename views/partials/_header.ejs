@@ -1,7 +1,7 @@
 <!-- ./views/partials/_header.ejs -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
   <head>JEFFREY'S TINY APP/URL SHORTENER</head>
 <body>
   <table>
@@ -10,9 +10,9 @@
   <p><a href='/register'>CLICK HERE TO REGISTER</a></p>
   <p><a href='/login'>CLICK HERE TO LOGIN</a></p>
   <% } else if (user) { %>
-  <form action="/logout" method="POST">
-    <label for="logout"> Your email is: <%= email  %></label>
-    <input id="logout" type="submit" name="logout" value="LOGOUT">
+  <form action='/logout' method='POST'>
+    <label for='logout'> Your email is: <%= email  %></label>
+    <input id='logout' type='submit' name='logout' value='LOGOUT'>
   </form>
   <% } else { %>
   <p><a href='/'>CLICK HERE TO GO TO THE PAGE OF ALL THE URLS</a></p>
